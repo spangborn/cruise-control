@@ -1,0 +1,13 @@
+{
+  "name": "fridaybot",
+  "version": "1.0.0",
+  "main": "bot.js",
+  "scripts": {
+    "start": "node bot.js"
+  },
+  "dependencies": {
+    "irc": "^0.5.0",
+    "sqlite3": "^5.1.6",
+    "dotenv": "^16.3.1"
+  }
+}
