@@ -51,17 +51,12 @@ const warningTimeout = 15 * 60 * 1000; // 15 minutes
 
 function isFriday() {
     const tz = IRC_TIMEZONE || 'UTC';
+    // Get current date/time in target timezone, including DST
     const now = new Date();
-    // Convert to target timezone using Intl.DateTimeFormat
-    const day = Number(
-        new Intl.DateTimeFormat('en-US', { timeZone: tz, weekday: 'short' })
-            .formatToParts(now)
-            .find(part => part.type === 'weekday')
-            .value === 'Fri'
-            ? 5
-            : now.getDay()
-    );
-    return day === 5;
+    // Use Intl.DateTimeFormat to get weekday in target timezone (handles DST)
+    const weekday = new Intl.DateTimeFormat('en-US', { timeZone: tz, weekday: 'short' })
+        .format(now);
+    return weekday === 'Fri';
 }
 
 function removeUrls(text) {
