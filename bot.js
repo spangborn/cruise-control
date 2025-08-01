@@ -13,7 +13,8 @@ const {
     IRC_PASSWORD,
     IRC_SERVER,
     IRC_CHANNEL,
-    IRC_WHITELIST
+    IRC_WHITELIST,
+    IRC_TIMEZONE
 } = process.env;
 
 if (!IRC_NICK || !IRC_USERNAME || !IRC_SERVER || !IRC_CHANNEL) {
@@ -47,8 +48,20 @@ db.serialize(() => {
 
 const warningTimeout = 15 * 60 * 1000; // 15 minutes
 
+
 function isFriday() {
-    return new Date().getDay() === 5;
+    const tz = IRC_TIMEZONE || 'UTC';
+    const now = new Date();
+    // Convert to target timezone using Intl.DateTimeFormat
+    const day = Number(
+        new Intl.DateTimeFormat('en-US', { timeZone: tz, weekday: 'short' })
+            .formatToParts(now)
+            .find(part => part.type === 'weekday')
+            .value === 'Fri'
+            ? 5
+            : now.getDay()
+    );
+    return day === 5;
 }
 
 function removeUrls(text) {
@@ -154,6 +167,6 @@ client.addListener('message', (from, to, message) => {
     checkAndHandleWarning(from, to, capPercent);
 });
 
-client.addListener('raw', (message) => {
-    console.log('[IRC RAW]', message);
-});
+// client.addListener('raw', (message) => {
+//     console.log('[IRC RAW]', message);
+// });
